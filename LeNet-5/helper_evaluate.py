@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-def compute_accuracy(model, test_loader, criterion, num_classes, classes, device):
+def compute_loss_accuracy(model, test_loader, criterion, num_classes, classes, device):
     # track test loss and accuracy
     test_loss = 0.0
     class_correct = [0 for i in range(num_classes)]

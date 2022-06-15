@@ -102,12 +102,12 @@ def train(model, num_epochs, train_loader, valid_loader,
         
               
     
-      print("Epoch: {} \tTrain loss: {:.4f} \tValidation loss: {:.4f} \tTrain accuracy : {:.4f} \n"
+      print("Epoch: {} \tTrain loss: {:.4f} \tValidation loss: {:.4f} \tTrain accuracy : {:.4f}"
             "\tValidation accuracy: {:.4f}".format(epoch+1, running_train_loss, running_valid_loss, train_acc, valid_acc))
     
       # save model if validation loss has decressed
       if running_valid_loss <= min_valid_loss:
-        print("Validation loss decressed ({:.6f} --> {:.6f}). Saving model ...".format(min_valid_loss, running_valid_loss))
+        print("Validation loss decressed ({:.4f} --> {:.4f}). Saving model ...".format(min_valid_loss, running_valid_loss))
         torch.save(model.state_dict(), "model.pt")
         min_valid_loss = running_valid_loss
     

@@ -18,9 +18,7 @@ def compute_valid_loss(model, data_loader, criterion, device):
 def compute_accuracy(model, data_loader, criterion, device):
     
     with torch.no_grad():
-    
         correct_pred, num_examples = 0, 0
-        
         for i, (inputs, targets) in enumerate(data_loader):
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
@@ -75,7 +73,7 @@ def train(model, num_epochs, train_loader, valid_loader,
     
       # since we're not training, we don't need to calculate the gradients for out outputs
       with torch.no_grad():
-          loss = compute_valid_loss(model, valid_loader, device)
+          loss = compute_valid_loss(model, valid_loader, criterion, device)
           # update validation loss
           running_valid_loss += loss.item()
           

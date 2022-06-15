@@ -1,13 +1,45 @@
 import torch
 import numpy as np
 
+def compute_valid_loss(model, data_loader, criterion, device):
+    
+    with torch.no_grad():
+        for batch_idx, (inputs, targets) in enumerate(data_loader):
+          # move tensor to the right device
+          inputs, targets = inputs.to(device), targets.to(device)
+          # forward pass
+          outputs = model(inputs)
+          # calculate the batch loss
+          logits = criterion(outputs, targets)
+          
+    return logits
+
+
+def compute_accuracy(model, data_loader, criterion, device):
+    
+    with torch.no_grad():
+    
+        correct_pred, num_examples = 0, 0
+        
+        for i, (inputs, targets) in enumerate(data_loader):
+            inputs, targets = inputs.to(device), targets.to(device)
+            outputs = model(inputs)
+            _, predicted_labels = torch.max(outputs, 1)
+    
+            num_examples += targets.size(0)
+            correct_pred += (predicted_labels == targets).sum()
+            
+    return correct_pred.float()/num_examples * 100
+
+
 
 def train(model, num_epochs, train_loader, valid_loader,
           test_loader, optimizer, criterion, device, 
           lr_scheduler=None, lr_scheduler_on = "valid_loss"):
     
-    # track training loss (minibatch losses)
-    train_losses, valid_losses = [], []
+    # track minibatch losses and accuracies 
+    train_loss_list, valid_loss_list = [], []
+    train_acc_list, valid_acc_list = [], []
     # initialize tracker for min validation loss
     min_valid_loss = np.inf
     
@@ -43,30 +75,30 @@ def train(model, num_epochs, train_loader, valid_loader,
     
       # since we're not training, we don't need to calculate the gradients for out outputs
       with torch.no_grad():
-        for batch_idx, (inputs, targets) in enumerate(valid_loader):
-          # move tensor to the right device
-          inputs, targets = inputs.to(device), targets.to(device)
-          # forward pass
-          outputs = model(inputs)
-          # calculate the batch loss
-          loss = criterion(outputs, targets)
+          loss = compute_valid_loss(model, valid_loader, device)
           # update validation loss
           running_valid_loss += loss.item()
+          
+          train_acc = compute_accuracy(model, train_loader, criterion, device)
+          valid_acc = compute_accuracy(model, valid_loader, criterion, device)
+          
+          train_acc_list.append(train_acc.item())
+          valid_acc_list.append(valid_acc.item()) 
     
       # calculate average loss over an epoch
       running_train_loss = running_train_loss / len(train_loader)
       running_valid_loss = running_valid_loss / len(valid_loader)
     
-      train_losses.append(running_train_loss)
-      valid_losses.append(running_valid_loss)
+      train_loss_list.append(running_train_loss)
+      valid_loss_list.append(running_valid_loss)
       
       
       if lr_scheduler is not None:
           
           if lr_scheduler_on == "valid_loss":
-              lr_scheduler.step(valid_losses[-1])
+              lr_scheduler.step(valid_loss_list[-1])
           elif lr_scheduler_on == "train_loss":
-              lr_scheduler.step(train_losses[-1])
+              lr_scheduler.step(train_loss_list[-1])
           else:
               raise ValueError("Invalid `lr_scheduler_on` choice.")
         
@@ -82,4 +114,4 @@ def train(model, num_epochs, train_loader, valid_loader,
     
     print("Finished training!")
     
-    return train_losses, valid_losses 
+    return train_loss_list, valid_loss_list, train_acc_list, valid_acc_list

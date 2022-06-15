@@ -50,21 +50,19 @@ def show_sample_test_result(test_loader, model, classes, train_on_gpu, device):
     inputs, targets = dataiter.next()
     inputs.numpy()
     
-    # move model inputs to cuda, if GPU available
-    if train_on_gpu:
-        inputs = inputs.cuda()
+    inputs = inputs.to(device)
     
     # get sample outputs
     outputs = model(inputs)
     # convert output probabilities to predicted class
-    _, predected_labels = torch.max(outputs, 1)
-    predictions = np.squeeze(predected_labels.numpy()) if not train_on_gpu else np.squeeze(predected_labels.cpu().numpy())
+    _, preds_tensor = torch.max(outputs, 1)
+    predictions = np.squeeze(preds_tensor.numpy()) if not train_on_gpu else np.squeeze(preds_tensor.cpu().numpy())
     
-    # plot the images in the batch, along with predicted and true labels
+    # plot the images in the batch along with predicted class and true labels
     fig = plt.figure(figsize=(25, 4))
     for idx in np.arange(20):
         ax = fig.add_subplot(2, 20/2, idx+1, xticks=[], yticks=[])
-        plt.imshow(np.transpose(inputs[idx], (1, 2, 0)))
+        ax.imshow(inputs[idx] if not train_on_gpu else inputs[idx].cpu())
         ax.set_title("{} ({})".format(classes[predictions[idx]], classes[targets[idx]]),
                      color=("green" if predictions[idx]==targets[idx].item() else "red"))
     plt.show()

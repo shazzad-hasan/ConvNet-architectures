@@ -102,7 +102,8 @@ def train(model, num_epochs, train_loader, valid_loader,
         
               
     
-      print("Epoch: {} \tTraining loss: {:.6f} \tValidation loss: {:.6f}".format(epoch+1, running_train_loss, running_valid_loss))
+      print("Epoch: {} \tTrain loss: {:.4f} \tValidation loss: {:.4f} \tTrain accuracy : {:.4f} \n"
+            "\tValidation accuracy: {:.4f}".format(epoch+1, running_train_loss, running_valid_loss, train_acc, valid_acc))
     
       # save model if validation loss has decressed
       if running_valid_loss <= min_valid_loss:

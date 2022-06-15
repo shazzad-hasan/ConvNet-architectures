@@ -19,6 +19,29 @@ def show_examples(train_loader):
         ax.set_title(str(labels[idx].item()))
     plt.show()
         
+
+# plot training and validation loss for each epoch
+
+def plot_results(train_loss_list, valid_loss_list, train_acc_list, valid_acc_list, num_epochs):
+    
+    epochs = range(1, num_epochs+1)
+    
+    plt.plot(epochs, train_loss_list, 'bo', label='Training loss')
+    plt.plot(epochs, valid_loss_list, 'b', label='Validation loss')
+    plt.xlabel('epochs')
+    plt.ylabel('loss')
+    plt.title('Training and validation loss')
+    plt.legend()
+    
+    plt.figure()
+    plt.plot(epochs, train_acc_list, 'bo', label='Training accuracy')
+    plt.plot(epochs, valid_acc_list, 'b', label='Validation accuracy')
+    plt.xlabel('epochs')
+    plt.ylabel('accuracy')
+    plt.title('Training and validation accuracy')
+    plt.legend()
+
+    plt.show()
     
 
 def show_sample_test_result(test_loader, model, classes, device):

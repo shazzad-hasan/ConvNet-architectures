@@ -4,6 +4,10 @@ import numpy as np
 import torch
 
 def set_all_seeds(seed):
+    """ sets seed for pseudo-random number generators in: 
+        pytorch, numpy, python.random In addition, 
+        sets the following environment variables """
+    
     os.environ["PL_GLOBAL_SEED"] = str(seed)
     random.seed(seed)
     np.random.seed(seed)

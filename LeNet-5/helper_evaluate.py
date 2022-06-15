@@ -1,5 +1,14 @@
-import torch
+import os
+import random
 import numpy as np
+import torch
+
+def set_all_seeds(seed):
+    os.environ["PL_GLOBAL_SEED"] = str(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 def compute_loss_accuracy(model, test_loader, criterion, num_classes, classes, device):
     # track test loss and accuracy

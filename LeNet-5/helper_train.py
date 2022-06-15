@@ -3,10 +3,11 @@ import numpy as np
 
 
 def train(model, num_epochs, train_loader, valid_loader,
-          test_loader, optimizer, criterion, device, lr_scheduler=None):
+          test_loader, optimizer, criterion, device, 
+          lr_scheduler=None, lr_scheduler_on = "valid_loss"):
     
-    # track training loss
-    train_loss, valid_loss = [], []
+    # track training loss (minibatch losses)
+    train_losses, valid_losses = [], []
     # initialize tracker for min validation loss
     min_valid_loss = np.inf
     
@@ -36,9 +37,6 @@ def train(model, num_epochs, train_loader, valid_loader,
         # update training loss
         running_train_loss += loss.item()
     
-      # update learning rate
-      lr_scheduler.step()
-    
       # ---------- validate the model ------------
       # set the model to evaluation mode
       model.eval()
@@ -59,8 +57,20 @@ def train(model, num_epochs, train_loader, valid_loader,
       running_train_loss = running_train_loss / len(train_loader)
       running_valid_loss = running_valid_loss / len(valid_loader)
     
-      train_loss.append(running_train_loss)
-      valid_loss.append(running_valid_loss)
+      train_losses.append(running_train_loss)
+      valid_losses.append(running_valid_loss)
+      
+      
+      if lr_scheduler is not None:
+          
+          if lr_scheduler_on == "valid_loss":
+              lr_scheduler.step(valid_losses[-1])
+          elif lr_scheduler_on == "train_loss":
+              lr_scheduler.step(train_losses[-1])
+          else:
+              raise ValueError("Invalid `lr_scheduler_on` choice.")
+        
+              
     
       print("Epoch: {} \tTraining loss: {:.6f} \tValidation loss: {:.6f}".format(epoch+1, running_train_loss, running_valid_loss))
     
@@ -72,4 +82,4 @@ def train(model, num_epochs, train_loader, valid_loader,
     
     print("Finished training!")
     
-    return train_loss, valid_loss 
+    return train_losses, valid_losses 

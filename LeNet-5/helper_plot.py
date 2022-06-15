@@ -45,7 +45,7 @@ def plot_results(train_loss_list, valid_loss_list, train_acc_list, valid_acc_lis
     
 
 def show_sample_test_result(test_loader, model, classes, train_on_gpu, device):
-    # get one batch of test images
+    # obtain one batch of test images
     dataiter = iter(test_loader)
     inputs, targets = dataiter.next()
     inputs.numpy()
@@ -58,11 +58,12 @@ def show_sample_test_result(test_loader, model, classes, train_on_gpu, device):
     _, preds_tensor = torch.max(outputs, 1)
     predictions = np.squeeze(preds_tensor.numpy()) if not train_on_gpu else np.squeeze(preds_tensor.cpu().numpy())
     
-    # plot the images in the batch along with predicted class and true labels
+    
+    # plot the images in the batch along with predicted and true labels
     fig = plt.figure(figsize=(25, 4))
     for idx in np.arange(20):
         ax = fig.add_subplot(2, 20/2, idx+1, xticks=[], yticks=[])
-        ax.imshow(inputs[idx] if not train_on_gpu else inputs[idx].cpu())
+        ax.imshow(np.squeeze(inputs[idx]) if not train_on_gpu else np.squeeze(inputs[idx].cpu()), cmap="gray")
         ax.set_title("{} ({})".format(classes[predictions[idx]], classes[targets[idx]]),
                      color=("green" if predictions[idx]==targets[idx].item() else "red"))
     plt.show()

@@ -55,7 +55,7 @@ def dataloader_mnist(batch_size,
                              shuffle = False)
 
     # image classes in the dataset
-    classes = train_data.classes 
+    classes = ['0','1','2','3','4','5', '6','7','8','9']
     
     if valid_size is None:
         return train_loader, test_loader, classes

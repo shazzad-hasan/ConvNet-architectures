@@ -1,4 +1,4 @@
-# Training-Reproduceable-Deep-Learning-Models
+# training-reproduceable-deep-learning-models
 
 ### Computer Vision
 

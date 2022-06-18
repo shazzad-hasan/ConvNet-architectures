@@ -17,8 +17,8 @@ def dataloader_mnist(batch_size,
     if test_transform is None:
         test_transform = transforms.ToTensor()
     
-    train_data = datasets.MNIST(root="./data", train=True, download=True, transform=train_transform)
-    test_data = datasets.MNIST(root="./data", train=False, download=True, transform=test_transform)
+    train_data = datasets.CIFAR10(root="./data", train=True, download=True, transform=train_transform)
+    test_data = datasets.CIFAR10(root="./data", train=False, download=True, transform=test_transform)
     
     if valid_size is not None:
         # obtain training indices for creating a validation dataset
@@ -55,7 +55,7 @@ def dataloader_mnist(batch_size,
                              shuffle = False)
 
     # image classes in the dataset
-    classes = ['0','1','2','3','4','5', '6','7','8','9']
+    classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     
     if valid_size is None:
         return train_loader, test_loader, classes

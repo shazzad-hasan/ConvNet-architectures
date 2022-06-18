@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from torch.utils.data.sampler import SubsetRandomSampler
 
-def dataloader_mnist(batch_size, 
+def dataloader_cifar10(batch_size, 
                      num_workers = 0,
                      train_transform = None, 
                      test_transform = None, 

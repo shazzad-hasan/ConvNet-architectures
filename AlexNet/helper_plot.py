@@ -2,6 +2,14 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt 
 
+# image classes in the dataset
+classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+def imshow(img):
+  # unnormalize
+  img = img / 2 + 0.5
+  # convert from Tensor to image
+  plt.imshow(np.transpose(img, (1,2,0))) 
 
 def show_examples(train_loader):
     # obtain one batch of training images
@@ -9,14 +17,13 @@ def show_examples(train_loader):
     images, labels = dataiter.next()
     images = images.numpy()
     
-    # plot the images in the batch, along with the corresponding labels
-    fig = plt.figure(figsize=(25, 4))
-    for idx in np.arange(20):
-        ax = fig.add_subplot(2, 20/2, idx+1, xticks=[], yticks=[])
-        ax.imshow(np.squeeze(images[idx]), cmap='gray')
-        # print out the correct label for each image
-        # .item() gets the value contained in a Tensor
-        ax.set_title(str(labels[idx].item()))
+    # plot the images in the batch along with the corresponding labels
+    fig = plt.figure(figsize=(10,4))
+    # display 10 images
+    for ind in np.arange(10):
+      ax = fig.add_subplot(2, 10/2, ind+1, xticks=[], yticks=[])
+      imshow(images[ind])
+      ax.set_title(classes[labels[ind]])
     plt.show()
         
 
@@ -45,7 +52,7 @@ def plot_results(train_loss_list, valid_loss_list, train_acc_list, valid_acc_lis
     
 
 def show_sample_test_result(test_loader, model, classes, train_on_gpu, device):
-    # obtain one batch of test images
+    # get one batch of test images
     dataiter = iter(test_loader)
     inputs, targets = dataiter.next()
     inputs.numpy()
@@ -58,12 +65,11 @@ def show_sample_test_result(test_loader, model, classes, train_on_gpu, device):
     _, preds_tensor = torch.max(outputs, 1)
     predictions = np.squeeze(preds_tensor.numpy()) if not train_on_gpu else np.squeeze(preds_tensor.cpu().numpy())
     
-    
-    # plot the images in the batch along with predicted and true labels
+    # plot the images in the batch along with predicted class and true labels
     fig = plt.figure(figsize=(25, 4))
     for idx in np.arange(20):
         ax = fig.add_subplot(2, 20/2, idx+1, xticks=[], yticks=[])
-        ax.imshow(np.squeeze(inputs[idx]) if not train_on_gpu else np.squeeze(inputs[idx].cpu()), cmap="gray")
+        imshow(inputs[idx] if not train_on_gpu else inputs[idx].cpu())
         ax.set_title("{} ({})".format(classes[predictions[idx]], classes[targets[idx]]),
                      color=("green" if predictions[idx]==targets[idx].item() else "red"))
     plt.show()
